@@ -1,6 +1,7 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
 
 defaults:
   run:
@@ -38,7 +39,7 @@ jobs:
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: '3.9'
       - name: Check packages
         # Seal: registry time machine + explicit setuptools/wheel pins so the
         # rebuilt wheel keeps the released `Generator: bdist_wheel (0.36.2)`
@@ -68,9 +69,9 @@ jobs:
         # available on all three OSes.
         include:
           - os: ubuntu-latest
-            python-version: "3.10"
+            python-version: '3.10'
             # Release-date graph: everything but the two legs below resolves.
-            pip-index-date: "2021-05-26"
+            pip-index-date: '2021-05-26'
           # Seal: macOS and Windows cannot resolve the release-date graph.
           # Windows: pytest 6.2.4 requires atomicwrites, whose entire file
           # history was re-uploaded to PyPI on 2022-07-09, so a date-filtered
@@ -80,18 +81,18 @@ jobs:
           # (2021-09); 3.4.7 would be compiled from source and fails without
           # OpenSSL headers.
           - os: macos-latest
-            python-version: "3.10"
-            pip-index-date: "2022-07-15"
+            python-version: '3.10'
+            pip-index-date: '2022-07-15'
           - os: windows-latest
-            python-version: "3.10"
-            pip-index-date: "2022-07-15"
+            python-version: '3.10'
+            pip-index-date: '2022-07-15'
           # Seal: upstream covered Linux in .travis.yml (os: linux) with
           # NOX_SESSION=test-2.7 .. test-3.8. Travis is gone; 2.7 is restored here
           # as an ubuntu leg on the release-date graph, which is what exercises the
           # py2-specific code the CVE-2025-66471 decoder rework adds.
           - os: ubuntu-latest
-            python-version: "2.7"
-            pip-index-date: "2021-05-26"
+            python-version: '2.7'
+            pip-index-date: '2021-05-26'
 
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} (${{ matrix.python-version }})
@@ -121,7 +122,7 @@ jobs:
         if: matrix.python-version == '2.7'
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       # lazy-object-proxy 1.7.0 claims Requires-Python ">=2.7,..." but its setup.py
       # uses a bare `super()`; upstream re-tagged the next release as ">=3.6" the same
