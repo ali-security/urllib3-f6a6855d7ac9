@@ -11,7 +11,16 @@ pytest-timeout==1.3.4
 pytest-freezegun==0.4.2
 flaky==3.6.1
 trustme==0.5.3
-cryptography==2.8
+# NB: on Python 2.7 sys.platform is "linux2", not "linux", so both markers must
+# name it explicitly - otherwise the py2.7 leg falls through to the py3-only
+# pin below and cannot install.
+cryptography==2.8; sys_platform == "linux" or sys_platform == "linux2"
+# Seal: cryptography 2.8 only ships an abi3 wheel for manylinux. On macOS
+# (setup-python's universal2 interpreter) and Windows there is no cp310-compatible
+# 2.8 wheel, so it is compiled from source and fails without OpenSSL headers.
+# 37.0.4 is the first pin with a universal2 + abi3 win_amd64 wheel; pyOpenSSL from
+# the `secure` extra upgrades cryptography past 2.8 on every platform anyway.
+cryptography==37.0.4; sys_platform != "linux" and sys_platform != "linux2"
 gcp-devrel-py-tools==0.0.15
 
 # https://github.com/GoogleCloudPlatform/python-repo-tools/issues/23
